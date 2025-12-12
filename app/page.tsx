@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
+import Link from "next/link"; // Imported Link for navigation
 // IMPORTING ICONS
 import { FaInstagram, FaWhatsapp, FaTiktok, FaLinkedin, FaTwitter, FaPhone, FaEnvelope, FaGithub } from "react-icons/fa";
 
@@ -20,10 +21,10 @@ export default function Home() {
     { id: 4, title: "UI/UX Design", description: "Designing intuitive user interfaces that look great and are easy to navigate.", icon: "🎨", color: "orange" }
   ];
 
-  const blogs = [
+  // --- RECENT BLOGS (Only showing top 2 on Home) ---
+  const recentBlogs = [
     { id: 1, title: "My Experience at the Nairobi Tech Week", category: "Tech Tour", date: "Nov 2024", excerpt: "Networking with industry leaders and learning about the future of AI in Kenya." },
     { id: 2, title: "Why I Chose C as My First Language", category: "Coding", date: "Oct 2024", excerpt: "Most people start with Python. Here is why I went the hard way with C and why I love it." },
-    { id: 3, title: "Building the Matatu Radar App", category: "Case Study", date: "Sept 2024", excerpt: "The challenges of mapping local routes and how we solved traffic data problems." }
   ];
 
   const experience = [
@@ -32,11 +33,10 @@ export default function Home() {
     { id: 3, role: "Martial Arts Enthusiast", company: "Personal Interest", date: "2023 - Present", description: "Active practitioner of Karate and Taekwondo, focusing on discipline and physical fitness.", color: "red" },
   ];
 
-  const projects = [
+  // --- FEATURED PROJECTS ---
+  const featuredProjects = [
     { id: 1, title: "Matatu Radar", tech: ["TypeScript"], description: "Helps day to day commuters on traffic inconveniences along their normal route.", link: "https://matatu-radar-app.vercel.app/" },
     { id: 2, title: "Allergen App", tech: ["JavaScript"], description: "AI mobile app to detect allergens with gamified safety alerts.", link: "https://allergen-app-eight.vercel.app/" },
-    { id: 3, title: "Content Dashboard", tech: ["Analytics", "UI Design"], description: "Concept dashboard for tracking video engagement and analytics.", link: "#" },
-    { id: 4, title: "Simple Shell", tech: ["C", "Linux Systems"], description: "Basic implementation of a UNIX command line interpreter.", link: "#" }
   ];
 
   const skills = [
@@ -49,7 +49,7 @@ export default function Home() {
   // --- CONTACTS WITH ICONS ---
   const contacts = [
     { name: "WhatsApp", link: "https://wa.me/254758904083", handle: "Chat on WhatsApp", icon: <FaWhatsapp className="text-3xl group-hover:text-green-500 transition"/> },
-    { name: "Call Me", link: "tel:+254758804083", handle: "+254 758904083", icon: <FaPhone className="text-3xl group-hover:text-blue-500 transition"/> },
+    { name: "Call Me", link: "tel:+254758904083", handle: "+254 758904083", icon: <FaPhone className="text-3xl group-hover:text-blue-500 transition"/> },
     { name: "Instagram", link: "https://instagram.com/black._.puppy", handle: "@black._.puppy", icon: <FaInstagram className="text-3xl group-hover:text-pink-500 transition"/> },
     { name: "TikTok", link: "https://tiktok.com/@black._.puppy", handle: "@black._.puppy", icon: <FaTiktok className="text-3xl group-hover:text-cyan-500 transition"/> },
     { name: "LinkedIn", link: "https://linkedin.com/in/rodgers-abraham", handle: "Rodgers Abraham", icon: <FaLinkedin className="text-3xl group-hover:text-blue-600 transition"/> },
@@ -91,16 +91,15 @@ export default function Home() {
               <p className="text-xs text-gray-400 leading-tight">Software Engineer</p>
             </div>
           </div>
-          {/* Desktop Menu */}
+          {/* Desktop Menu - Using Links for Navigation */}
           <div className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
-            <a href="#journey" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Journey</a>
-            <a href="#projects" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Projects</a>
-            <a href="#blogs" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition flex items-center gap-1">
+            <Link href="/" className="px-4 py-1.5 text-sm text-white bg-white/10 rounded-full transition">Home</Link>
+            <Link href="/projects" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Projects</Link>
+            <Link href="/blog" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition flex items-center gap-1">
               Blog <span className="text-[10px]">↗</span>
-            </a>
+            </Link>
             <a href="#contact" className="px-4 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-full transition">Contact</a>
           </div>
-          {/* Mobile placeholder menu icon */}
           <div className="md:hidden text-2xl">☰</div>
         </div>
       </nav>
@@ -109,7 +108,6 @@ export default function Home() {
         {/* --- HERO SECTION --- */}
         <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[70vh]">
           <div className="space-y-6 order-2 md:order-1">
-            {/* Fixed unescaped entity: I'M -> I&apos;M */}
             <h2 className="text-xl text-blue-400 font-medium tracking-wide">HEY, I&apos;M RODGERS ABRAHAM</h2>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
               Software <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Engineer.</span>
@@ -118,7 +116,9 @@ export default function Home() {
               IT student at University of Embu focused on programming and web development. Building scalable systems and digital content.
             </p>
             <div className="flex gap-4 pt-4">
-              <a href="#projects" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition shadow-lg shadow-blue-500/25">View Projects</a>
+              <Link href="/projects" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition shadow-lg shadow-blue-500/25">
+                View Projects
+              </Link>
               <a href="#contact" className={`px-8 py-3 ${glassCard} font-semibold text-white hover:bg-white/10`}>Contact Me</a>
             </div>
           </div>
@@ -228,11 +228,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- PROJECTS SECTION --- */}
+        {/* --- FEATURED PROJECTS SECTION --- */}
         <div id="projects" className="max-w-6xl w-full mx-auto mt-32">
-          <h2 className="text-3xl font-bold mb-12 text-white">Selected Works</h2>
+          <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-4">
+             <h2 className="text-3xl font-bold text-white">Featured Works</h2>
+             <Link href="/projects" className="text-blue-400 hover:text-blue-300 text-sm">View All Projects →</Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map((project) => (
+            {featuredProjects.map((project) => (
               <a key={project.id} href={project.link} target={project.link === "#" ? "_self" : "_blank"} rel="noopener noreferrer" 
                  className={`${glassCard} p-8 block group hover:-translate-y-1`}>
                 <div className="flex justify-between items-start mb-4">
@@ -252,22 +255,23 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- BLOGS & TECH TOURS --- */}
+        {/* --- LATEST BLOGS SECTION --- */}
         <div id="blogs" className="max-w-6xl w-full mx-auto mt-32">
           <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-4">
-            <h2 className="text-3xl font-bold text-white">Tech Tours & Journal</h2>
-            <a href="#" className="text-blue-400 hover:text-blue-300 text-sm">View All Posts →</a>
+            <h2 className="text-3xl font-bold text-white">Latest from Journal</h2>
+            <Link href="/blog" className="text-blue-400 hover:text-blue-300 text-sm">View All Posts →</Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {blogs.map((blog) => (
-              <div key={blog.id} className={`${glassCard} p-6 hover:bg-white/5 transition`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {recentBlogs.map((blog) => (
+              // FIX: Wrapped in Link
+              <Link key={blog.id} href={`/blog/${blog.id}`} className={`${glassCard} p-6 hover:bg-white/5 transition block`}>
                 <div className="flex justify-between items-start mb-3">
                     <span className="text-xs text-blue-400 font-semibold tracking-wider uppercase">{blog.category}</span>
                     <span className="text-xs text-gray-500">{blog.date}</span>
                 </div>
                 <h3 className="text-lg font-bold mb-2 text-white line-clamp-2">{blog.title}</h3>
                 <p className="text-gray-400 text-sm line-clamp-3">{blog.excerpt}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -298,7 +302,6 @@ export default function Home() {
 
         {/* --- CONTACT SECTION --- */}
         <div id="contact" className="max-w-4xl w-full mx-auto mt-32 mb-20">
-          {/* Fixed unescaped entity: Let's -> Let&apos;s */}
           <h2 className="text-3xl font-bold mb-12 text-center text-white">Let&apos;s Connect</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {contacts.map((contact) => (
