@@ -1,12 +1,30 @@
 import Link from "next/link";
+import { client } from "../../sanity/client"; 
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  publishedAt: string;
+  excerpt: string;
+}
 
-export default function BlogPage() {
-  const blogs = [
-    { id: 1, title: "My Experience at the Nairobi Tech Week", category: "Tech Tour", date: "Nov 2024", excerpt: "Networking with industry leaders and learning about the future of AI in Kenya." },
-    { id: 2, title: "Why I Chose C as My First Language", category: "Coding", date: "Oct 2024", excerpt: "Most people start with Python. Here is why I went the hard way with C and why I love it." },
-    { id: 3, title: "Building the Matatu Radar App", category: "Case Study", date: "Sept 2024", excerpt: "The challenges of mapping local routes and how we solved traffic data problems." },
-    { id: 4, title: "Understanding Pointers in C", category: "Tutorial", date: "Aug 2024", excerpt: "A visual guide to understanding memory management and pointers for beginners." }
-  ];
+// This function fetches data from Sanity
+async function getBlogs() {
+  const query = `*[_type == "post"] | order(publishedAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    category,
+    publishedAt,
+    excerpt
+  }`;
+  const data = await client.fetch(query);
+  return data;
+}
+
+export default async function BlogPage() {
+  const blogs = await getBlogs();
 
   const glassCard = "bg-gray-900/40 backdrop-blur-md border border-white/10 rounded-2xl hover:border-blue-500/50 transition-all duration-300";
 
@@ -23,13 +41,19 @@ export default function BlogPage() {
             </div>
 
             <div className="space-y-6">
-                {blogs.map((blog) => (
-                <Link key={blog.id} href={`/blog/${blog.id}`} className="block">
+
+                {blogs.map((blog: Blog) => (
+                <Link key={blog._id} href={`/blog/${blog.slug}`} className="block">
                     <article className={`${glassCard} p-8 hover:bg-white/5 transition group cursor-pointer`}>
                         <div className="flex items-center gap-4 text-xs mb-4">
                             <span className="text-blue-400 font-semibold tracking-wider uppercase">{blog.category}</span>
                             <span className="text-gray-500">•</span>
-                            <span className="text-gray-500">{blog.date}</span>
+                            <span className="text-gray-500">
+                              {/* Safely handle the date */}
+                              {blog.publishedAt 
+                                ? new Date(blog.publishedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+                                : 'Recent'}
+                            </span>
                         </div>
                         <h2 className="text-2xl font-bold mb-3 text-white group-hover:text-blue-400 transition">{blog.title}</h2>
                         <p className="text-gray-400 leading-relaxed">{blog.excerpt}</p>
