@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
-import Link from "next/link"; // Imported Link for navigation
+import Link from "next/link"; 
+import { client } from "../sanity/client"; // IMPORTED SANITY CLIENT
 // IMPORTING ICONS
 import { FaInstagram, FaWhatsapp, FaTiktok, FaLinkedin, FaTwitter, FaPhone, FaEnvelope, FaGithub } from "react-icons/fa";
 
@@ -11,8 +12,25 @@ type ColorStyle = {
   shadow: string;
 };
 
-export default function Home() {
+// --- FETCHING DATA FROM SANITY ---
+async function getRecentPosts() {
+  const query = `*[_type == "post"] | order(publishedAt desc)[0..1] {
+    _id,
+    title,
+    "slug": slug.current,
+    category,
+    publishedAt,
+    excerpt
+  }`;
+  const data = await client.fetch(query);
+  return data;
+}
+
+export default async function Home() {
   
+  // FETCH REAL POSTS
+  const recentPosts = await getRecentPosts();
+
   // --- DATA ---
   const services = [
     { id: 1, title: "Web Development", description: "Building fast, responsive websites using Next.js, React, and Tailwind CSS.", icon: "💻", color: "blue" },
@@ -21,11 +39,7 @@ export default function Home() {
     { id: 4, title: "UI/UX Design", description: "Designing intuitive user interfaces that look great and are easy to navigate.", icon: "🎨", color: "orange" }
   ];
 
-  // --- RECENT BLOGS (Only showing top 2 on Home) ---
-  const recentBlogs = [
-    { id: 1, title: "My Experience at the Nairobi Tech Week", category: "Tech Tour", date: "Nov 2024", excerpt: "Networking with industry leaders and learning about the future of AI in Kenya." },
-    { id: 2, title: "Why I Chose C as My First Language", category: "Coding", date: "Oct 2024", excerpt: "Most people start with Python. Here is why I went the hard way with C and why I love it." },
-  ];
+  // (Removed hardcoded recentBlogs array since we are fetching them now)
 
   const experience = [
     { id: 1, role: "BSIT Student", company: "University of Embu", date: "Aug 2025 - Present", description: "Pursuing a BSc in Information Technology. Focusing on software engineering, C programming, and web development.", color: "blue" },
@@ -124,9 +138,9 @@ export default function Home() {
           </div>
           <div className="relative order-1 md:order-2 flex justify-center">
             <div className="relative h-[300px] w-[300px] md:h-[400px] md:w-[400px]">
-                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-                 <div className="relative h-full w-full rounded-full overflow-hidden border-[6px] border-white/10 z-10">
-                  <Image src="/profile.jpg" alt="Profile" fill className="object-cover" priority />
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+                <div className="relative h-full w-full rounded-full overflow-hidden border-[6px] border-white/10 z-10">
+                 <Image src="/profile.jpg" alt="Profile" fill className="object-cover" priority />
                 </div>
             </div>
           </div>
@@ -255,24 +269,33 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- LATEST BLOGS SECTION --- */}
+        {/* --- LATEST BLOGS SECTION (DYNAMIC NOW) --- */}
         <div id="blogs" className="max-w-6xl w-full mx-auto mt-32">
           <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-4">
             <h2 className="text-3xl font-bold text-white">Latest from Journal</h2>
             <Link href="/blog" className="text-blue-400 hover:text-blue-300 text-sm">View All Posts →</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {recentBlogs.map((blog) => (
-              // FIX: Wrapped in Link
-              <Link key={blog.id} href={`/blog/${blog.id}`} className={`${glassCard} p-6 hover:bg-white/5 transition block`}>
-                <div className="flex justify-between items-start mb-3">
-                    <span className="text-xs text-blue-400 font-semibold tracking-wider uppercase">{blog.category}</span>
-                    <span className="text-xs text-gray-500">{blog.date}</span>
+            {recentPosts.length > 0 ? (
+                recentPosts.map((blog: any) => (
+                <Link key={blog._id} href={`/blog/${blog.slug}`} className={`${glassCard} p-6 hover:bg-white/5 transition block`}>
+                    <div className="flex justify-between items-start mb-3">
+                        <span className="text-xs text-blue-400 font-semibold tracking-wider uppercase">{blog.category || "Tech"}</span>
+                        <span className="text-xs text-gray-500">
+                          {blog.publishedAt 
+                            ? new Date(blog.publishedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+                            : 'Recent'}
+                        </span>
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-white line-clamp-2">{blog.title}</h3>
+                    <p className="text-gray-400 text-sm line-clamp-3">{blog.excerpt || "Click to read the full story..."}</p>
+                </Link>
+                ))
+            ) : (
+                <div className="text-gray-500 col-span-2 text-center py-6">
+                    No recent posts found. Check Sanity Studio.
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-white line-clamp-2">{blog.title}</h3>
-                <p className="text-gray-400 text-sm line-clamp-3">{blog.excerpt}</p>
-              </Link>
-            ))}
+            )}
           </div>
         </div>
 
